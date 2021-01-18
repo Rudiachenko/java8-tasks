@@ -29,8 +29,7 @@ class OrderStats {
      */
     static List<Order> ordersForCardType(final Stream<Customer> customers, PaymentInfo.CardType cardType) {
         return customers
-                .map(Customer::getOrders)
-                .flatMap(Collection::stream)
+                .flatMap(customer -> customer.getOrders().stream())
                 .filter(order -> order.getPaymentInfo().getCardType().equals(cardType))
                 .collect(Collectors.toList());
     }
@@ -46,9 +45,7 @@ class OrderStats {
      */
     static Map<Integer, List<Order>> orderSizes(final Stream<Order> orders) {
         return orders
-                .collect(Collectors.groupingBy(order
-                        -> order.getOrderItems()
-                        .stream()
+                .collect(Collectors.groupingBy(order -> order.getOrderItems().stream()
                         .mapToInt(OrderItem::getQuantity).sum()));
     }
 
@@ -64,8 +61,7 @@ class OrderStats {
      */
     static Boolean hasColorProduct(final Stream<Order> orders, final Product.Color color) {
         return orders
-                .allMatch(order -> order.getOrderItems()
-                        .stream()
+                .allMatch(order -> order.getOrderItems().stream()
                         .anyMatch(orderItem -> orderItem.getProduct().getColor().equals(color)));
     }
 
