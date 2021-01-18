@@ -6,6 +6,7 @@ import com.expertsoft.util.AveragingBigDecimalCollector;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -137,10 +138,12 @@ class OrderStats {
      */
     static BigDecimal averageProductPriceForCreditCard(final Stream<Customer> customers, final String cardNumber) {
         final AveragingBigDecimalCollector collector = new AveragingBigDecimalCollector();
-        customers
+        return customers
                 .flatMap(customer -> customer.getOrders().stream())
                 .filter(order -> order.getPaymentInfo().getCardNumber().equals(cardNumber))
                 .flatMap(order -> order.getOrderItems().stream())
-                .
+                .flatMap(orderItem -> IntStream.rangeClosed(1, orderItem.getQuantity()).mapToObj(i -> orderItem.getProduct()))
+                .map(Product::getPrice)
+                .collect(collector);
     }
 }
